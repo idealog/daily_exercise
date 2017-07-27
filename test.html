@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>test</title>
+	<script type="text/javascript" src="jquery-2.1.4.js"></script>
+</head>
+<body>
+
+	<div id= "mike">
+
+	</div>
+	<div id= "talking">
+		<canvas width="50" height="140" id="voice">
+			
+		</canvas>
+	</div> 
+	
+	<script type="text/javascript">
+
+		function draw_voice()
+		{
+			var ele = document.getElementById("voice");
+
+			var ctx = ele.getContext('2d');
+
+			var  xPos = 0, yPos = 75,r = 1;
+			//while(xPos < 40)
+			var interval = setInterval(function(){
+
+				ctx.strokeStyle = "#89d000";
+
+				ctx.lineWidth = "1.2";
+
+				ctx.beginPath();
+
+				ctx.arc(xPos,yPos,r,-Math.PI/3,Math.PI/3,0);
+
+				ctx.stroke();
+
+				xPos += 10;
+
+				r+= 3 ;
+
+				if(xPos >= 40)
+				{
+					clearInterval(interval);
+				}
+
+			},200);
+		}
+
+		draw_voice();
+
+		$.fn.extend(
+		{
+			mike_animate:function(vo_len){
+				var el = $(this);
+				var initDom = function()
+				{
+					var height = 20,width=140,opacity =0.1;
+					var animate = el;
+					for(var i=0;i<vo_len;i++)
+					{
+						var div = $('<div style="margin-top:10px; visibility:hidden"></div>');
+						animate.append(div);
+						$(div).css('width',width);
+						$(div).css('height',height);
+						$(div).css("background","rgba(1,1,1," + opacity + ")");
+						width -= 20;
+						opacity += 0.2 
+					}
+				}
+				initDom();
+				var animateDivs = el.find("div");
+				var index =animateDivs.length-1;
+				var clearVisible = function(){
+					animateDivs.css("visibility","hidden");
+				}
+				var setAction = function(){	
+						animateDivs.eq(index).css("visibility","visible");
+						index--; 
+						if(index == -2)
+						{
+							clearVisible();
+							index = animateDivs.length-1;
+						}
+				};
+				var interval;
+				var control ={
+					begin:function(){
+						el.css('display','block');
+						interval = setInterval(setAction,200);
+					},
+					stop:function(){
+						el.css('display','none');
+						if(interval)
+						{
+							clearInterval(interval);
+						}
+					}
+				}
+				return control;// 控制开关
+			},
+
+
+		});
+		var setAnimate = $("#mike").mike_animate(7);
+		setAnimate.begin();
+
+
+
+
+	</script>
+</body>
+</html>
